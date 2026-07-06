@@ -696,6 +696,18 @@ header {
     overflow-x: auto;
 }
 
+.bubble-content img {
+    max-width: 320px;
+    max-height: 320px;
+    width: auto;
+    height: auto;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-glass);
+    margin: 0.75rem 0;
+    display: block;
+    box-shadow: var(--shadow-md);
+}
+
 .message-bubble.user .bubble-content {
     background: var(--bg-secondary);
     border: 1px solid var(--border-glass);
