@@ -7,6 +7,7 @@ let activeRightTab = "sql";
 
 // Select DOM Elements
 const apiInput = document.getElementById("api-endpoint");
+const apiSecretKeyInput = document.getElementById("api-secret-key");
 const apiBadge = document.getElementById("api-status-badge");
 const chatInput = document.getElementById("chat-input");
 const chatMessages = document.getElementById("chat-messages");
@@ -19,6 +20,16 @@ let healthCheckTimer = null;
 
 // Initialize app when DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
+    // Load saved values on DOM load
+    const savedEndpoint = localStorage.getItem("api-endpoint");
+    if (savedEndpoint) {
+        apiInput.value = savedEndpoint;
+    }
+    const savedSecretKey = localStorage.getItem("api-secret-key") || "";
+    if (apiSecretKeyInput) {
+        apiSecretKeyInput.value = savedSecretKey;
+    }
+
     // On desktop viewports, have the right panel open by default
     if (window.innerWidth > 1024) {
         const panel = document.querySelector(".right-panel");
@@ -40,9 +51,18 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Automatically trigger health check when input changes
     apiInput.addEventListener("change", () => {
+        localStorage.setItem("api-endpoint", apiInput.value.trim());
         showToast("Reconnecting to API endpoint...");
         checkAPIHealth();
     });
+
+    if (apiSecretKeyInput) {
+        apiSecretKeyInput.addEventListener("change", () => {
+            localStorage.setItem("api-secret-key", apiSecretKeyInput.value.trim());
+            showToast("Updated API Secret Key...");
+            checkAPIHealth();
+        });
+    }
 
     // Start periodic health check polling (every 12 seconds)
     healthCheckTimer = setInterval(checkAPIHealth, 12000);
@@ -218,6 +238,16 @@ function getBaseUrl() {
     return url;
 }
 
+// Generate headers including authorization secret key
+function getHeaders(extraHeaders = {}) {
+    const headers = { ...extraHeaders };
+    const secretKey = apiSecretKeyInput ? apiSecretKeyInput.value.trim() : "";
+    if (secretKey) {
+        headers["X-Secret-Key"] = secretKey;
+    }
+    return headers;
+}
+
 // Check if API endpoint is online and pull DB metrics
 async function checkAPIHealth() {
     const baseUrl = getBaseUrl();
@@ -226,7 +256,7 @@ async function checkAPIHealth() {
     try {
         const res = await fetch(`${baseUrl}/api/status`, {
             method: "GET",
-            headers: { "Accept": "application/json" }
+            headers: getHeaders({ "Accept": "application/json" })
         });
         
         if (res.ok) {
@@ -282,9 +312,9 @@ async function sendChatMessage() {
     try {
         const res = await fetch(`${baseUrl}/api/chat`, {
             method: "POST",
-            headers: {
+            headers: getHeaders({
                 "Content-Type": "application/json"
-            },
+            }),
             body: JSON.stringify({
                 message: message,
                 history: chatHistory,
@@ -454,7 +484,7 @@ async function executeSQLQuery() {
     try {
         const res = await fetch(`${baseUrl}/api/sql`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: getHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ query: query })
         });
 
@@ -567,7 +597,7 @@ async function executeVectorSearch() {
     try {
         const res = await fetch(`${baseUrl}/api/semantic`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: getHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ query: query, n_results: 5 })
         });
 

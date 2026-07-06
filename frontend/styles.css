@@ -486,6 +486,32 @@ header {
     box-shadow: inset 0 0 10px rgba(163, 230, 53, 0.05);
 }
 
+/* API Secret Key Box */
+.secret-key-card {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    padding: 0.55rem 0.75rem;
+    display: flex;
+    align-items: center;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.secret-key-card:focus-within {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.secret-key-card input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    width: 100%;
+}
+
 /* Footer Section inside Sidebar */
 .sidebar-footer {
     padding: 1rem 1.25rem;
