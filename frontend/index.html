@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Durg University RAG Portal</title>
+    <meta name="description" content="Premium Independent Frontend for Durg University SQL & Semantic RAG Copilot">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS File -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body data-theme="dark">
+
+    <!-- Top Loading Progress Bar -->
+    <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- App Header -->
+    <header>
+        <div class="header-left">
+            <button class="sidebar-toggle" onclick="toggleLeftSidebar()" title="Toggle Sidebar">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="logo-area">
+                <img src="assets/logo.svg" alt="DurgUniversity Logo" class="logo-img">
+                <span class="logo-text">DurgUniversity<span>-RAG</span></span>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <!-- API Connection Configurator -->
+            <div class="api-config-group">
+                <i class="fa-solid fa-link api-icon"></i>
+                <input type="text" id="api-endpoint" value="https://sameerbanchhor-work-durg-university-rag.hf.space" placeholder="API Base Endpoint URL..." title="Hugging Face Space API Endpoint">
+                <span class="api-badge" id="api-status-badge">
+                    <span class="dot"></span> <span class="status-label">Checking...</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme Mode">
+                <i class="fa-solid fa-sun icon-sun"></i>
+                <i class="fa-solid fa-moon icon-moon"></i>
+            </button>
+            <button class="panel-toggle-btn" onclick="toggleRightPanel()" title="Toggle Utilities Panel">
+                <i class="fa-solid fa-terminal"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container Layout -->
+    <div class="main-container">
+        <!-- Sidebar Backdrop (Mobile Drawer Collapse) -->
+        <div class="sidebar-backdrop" onclick="toggleLeftSidebar()"></div>
+
+        <!-- Left Sidebar: Modes & Navigation -->
+        <aside class="sidebar-left">
+            <div class="sidebar-scroll-area">
+                <!-- Start New Chat -->
+                <button class="new-chat-btn" onclick="startNewChat()">
+                    <i class="fa-solid fa-plus"></i> New Chat
+                </button>
+                
+                <!-- RAG Mode Selector -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title"><i class="fa-solid fa-sliders"></i> Mode Selector</div>
+                    <div class="sidebar-mode-list">
+                        <button class="sidebar-mode-btn active mode-pill" onclick="selectMode('sql')" title="Fast SQL lookup">
+                            <i class="fa-solid fa-bolt"></i> <span>SQL Mode</span>
+                        </button>
+                        <button class="sidebar-mode-btn mode-pill" onclick="selectMode('analyst')" title="Retriever & Report analyst agents">
+                            <i class="fa-solid fa-chart-simple"></i> <span>Analyst Mode</span>
+                        </button>
+                        <button class="sidebar-mode-btn mode-pill" onclick="selectMode('scientist')" title="6 scientific execution agents">
+                            <i class="fa-solid fa-brain"></i> <span>Scientist Mode</span>
+                        </button>
+                        <button class="sidebar-mode-btn mode-pill" onclick="selectMode('moe')" title="Parallel MoE expert checking">
+                            <i class="fa-solid fa-puzzle-piece"></i> <span>Experts Mode</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Accent Color Theme -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title"><i class="fa-solid fa-palette"></i> Accent Color</div>
+                    <div class="color-presets-grid" id="color-presets-grid"></div>
+                </div>
+
+                <!-- Interface Scale (DPI Config) -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title"><i class="fa-solid fa-maximize"></i> Interface Scale</div>
+                    <div class="scale-preset-list">
+                        <button class="scale-btn" onclick="applyScalePreset('small')" id="scale-btn-small" title="Small Scale">Small</button>
+                        <button class="scale-btn" onclick="applyScalePreset('normal')" id="scale-btn-normal" title="Normal Scale">Normal</button>
+                        <button class="scale-btn" onclick="applyScalePreset('large')" id="scale-btn-large" title="Large Scale">Large</button>
+                    </div>
+                </div>
+
+                <!-- Database Metrics Card -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title"><i class="fa-solid fa-database"></i> DB Statistics</div>
+                    <div class="db-stats-card">
+                        <div class="stat-item">
+                            <span class="stat-lbl">Students:</span>
+                            <span class="stat-val" id="db-stat-students">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-lbl">Exam Attempts:</span>
+                            <span class="stat-val" id="db-stat-attempts">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-lbl">Marks Records:</span>
+                            <span class="stat-val" id="db-stat-marks">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-lbl">Colleges:</span>
+                            <span class="stat-val" id="db-stat-colleges">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Area inside Sidebar -->
+            <div class="sidebar-footer">
+                <div class="server-meta">
+                    <span class="lbl">Server:</span>
+                    <span class="val" id="server-time-meta">-</span>
+                </div>
+                <div class="version-tag">Production v2.1</div>
+            </div>
+        </aside>
+
+        <!-- Center Area: Chat Window -->
+        <main class="chat-area">
+            <!-- Messages Display -->
+            <div class="messages-container" id="chat-messages">
+                <!-- Welcome Hero -->
+                <div class="welcome-hero" id="welcome-hero">
+                    <img src="assets/robot-icon.png" alt="Robot Icon" class="welcome-hero-logo">
+                    <h3>Durg University Results Copilot</h3>
+                    <p>Ask anything about student marks, result distributions, failures, pass percentages, college-level statistics, or individual roll number reports.</p>
+                    
+                    <div class="suggestions-grid">
+                        <div class="suggestion-card" onclick="useSuggestion(this)">
+                            <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
+                            <div class="card-text">Show BCA average marks by subject</div>
+                        </div>
+                        <div class="suggestion-card" onclick="useSuggestion(this)">
+                            <div class="card-icon"><i class="fa-solid fa-percent"></i></div>
+                            <div class="card-text">Compare B.Sc and BA pass rates</div>
+                        </div>
+                        <div class="suggestion-card" onclick="useSuggestion(this)">
+                            <div class="card-icon"><i class="fa-solid fa-award"></i></div>
+                            <div class="card-text">Who scored highest in BCom Session 2023?</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Bottom Control Box -->
+            <div class="chat-input-wrapper">
+                <div class="chat-input-area">
+                    <textarea class="chat-input" id="chat-input" placeholder="Type a message or analytical question (e.g. BCA marks distribution)..." rows="1" onkeydown="handleChatSubmit(event)"></textarea>
+                    <button class="send-btn" id="send-chat-btn" onclick="sendChatMessage()" title="Send Question">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </button>
+                </div>
+                <div class="chat-disclaimer">
+                    Status: <span id="system-status-indicator" class="status-ready">READY · IDLE</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Side Panel: Utilities -->
+        <aside class="right-panel">
+            <!-- Panel Header Tabs -->
+            <div class="panel-tabs">
+                <button class="tab-btn active" onclick="switchRightTab('sql')" id="tab-sql-btn">
+                    <i class="fa-solid fa-database"></i> SQL Workbench
+                </button>
+                <button class="tab-btn" onclick="switchRightTab('vector')" id="tab-vector-btn">
+                    <i class="fa-solid fa-hashtag"></i> Vector Search
+                </button>
+            </div>
+
+            <!-- Tab Contents -->
+            <div class="panel-scroll-area">
+                <!-- SQL Workbench Tab -->
+                <div class="tab-content active" id="pane-sql">
+                    <div class="workbench-header">
+                        <p class="section-desc">Run raw SQL queries against the local DuckDB relational database replica.</p>
+                        <span class="timer-tag"><i class="fa-regular fa-clock"></i> Execution time: <span id="sql-time">-</span></span>
+                    </div>
+                    
+                    <div class="sql-box">
+                        <textarea class="sql-textarea" id="sql-query-input" placeholder="SELECT * FROM exam_attempts LIMIT 10;" rows="5"></textarea>
+                        <button class="execute-btn" onclick="executeSQLQuery()">
+                            <i class="fa-solid fa-play"></i> Run SQL Query
+                        </button>
+                    </div>
+
+                    <div class="sql-results-wrapper" id="sql-results-wrapper">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-table-list"></i>
+                            <div>Run a query to view results table.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vector Explorer Tab -->
+                <div class="tab-content" id="pane-vector">
+                    <p class="section-desc text-muted">Retrieve semantic records directly from the ChromaDB vector index matching search text.</p>
+                    
+                    <div class="vector-search-box">
+                        <input type="text" class="vector-input" id="vector-search-input" placeholder="e.g. BCA first division list..." onkeydown="handleVectorSubmit(event)">
+                        <button class="execute-btn" onclick="executeVectorSearch()">
+                            <i class="fa-solid fa-magnifying-glass"></i> Search Vectors
+                        </button>
+                    </div>
+
+                    <div class="vector-results-list" id="vector-results-list">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-spider"></i>
+                            <div>Search semantic vectors.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Javascript Logic -->
+    <script src="theme.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
