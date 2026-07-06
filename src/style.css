@@ -697,8 +697,8 @@ header {
 }
 
 .bubble-content img {
-    max-width: 320px;
-    max-height: 320px;
+    max-width: 150px;
+    max-height: 150px;
     width: auto;
     height: auto;
     border-radius: var(--radius-md);
