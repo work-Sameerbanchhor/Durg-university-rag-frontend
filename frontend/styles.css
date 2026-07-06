@@ -683,6 +683,15 @@ header {
     max-width: calc(100% - 48px);
 }
 
+.bubble-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+    font-size: 0.82rem;
+    display: block;
+    overflow-x: auto;
+}
+
 .message-bubble.user .bubble-content {
     background: var(--bg-secondary);
     border: 1px solid var(--border-glass);
@@ -1284,6 +1293,8 @@ header {
         right: 0;
         top: var(--header-height);
         bottom: 0;
+        width: 100%;
+        max-width: 420px;
         transform: translateX(100%);
         margin-right: 0; /* Reset desktop margin-right spacing */
         box-shadow: var(--shadow-lg);
@@ -1300,8 +1311,22 @@ header {
     }
     
     header {
-        grid-template-columns: auto 1fr auto;
+        display: flex;
+        justify-content: space-between;
         padding: 0 0.85rem;
+    }
+
+    .header-left {
+        gap: 0.4rem;
+    }
+
+    .logo-area {
+        gap: 0.35rem;
+        font-size: 1.05rem;
+    }
+
+    .logo-img {
+        height: 24px;
     }
     
     .sidebar-toggle {
@@ -1313,6 +1338,8 @@ header {
         left: 0;
         top: var(--header-height);
         bottom: 0;
+        width: 100%;
+        max-width: 280px;
         transform: translateX(-100%);
         margin-left: 0; /* Reset desktop margin-left spacing */
         box-shadow: var(--shadow-lg);
