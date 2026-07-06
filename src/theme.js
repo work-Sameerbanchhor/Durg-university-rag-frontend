@@ -199,3 +199,18 @@ document.addEventListener("DOMContentLoaded", () => {
         applyScalePreset(currentScale);
     });
 });
+
+// Export/bind to window scope for compatibility with ES Modules in Vite
+window.getCurrentPresetKey = getCurrentPresetKey;
+window.applyThemePreset = applyThemePreset;
+window.initThemePresets = initThemePresets;
+window.getCurrentScale = getCurrentScale;
+window.applyScalePreset = applyScalePreset;
+
+export {
+    getCurrentPresetKey,
+    applyThemePreset,
+    initThemePresets,
+    getCurrentScale,
+    applyScalePreset
+};

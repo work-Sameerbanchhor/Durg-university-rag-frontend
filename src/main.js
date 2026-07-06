@@ -1,3 +1,6 @@
+import './theme.js';
+import './style.css';
+
 // ==========================================================================
 // STATE MANAGEMENT & CONSTANTS
 // ==========================================================================
@@ -659,3 +662,20 @@ function handleVectorSubmit(event) {
         executeVectorSearch();
     }
 }
+
+// Export/bind to window scope for compatibility with ES Modules in Vite
+window.toggleTheme = toggleTheme;
+window.toggleLeftSidebar = toggleLeftSidebar;
+window.toggleRightPanel = toggleRightPanel;
+window.switchRightTab = switchRightTab;
+window.selectMode = selectMode;
+window.sendChatMessage = sendChatMessage;
+window.handleChatSubmit = handleChatSubmit;
+window.useSuggestion = useSuggestion;
+window.startNewChat = startNewChat;
+window.executeSQLQuery = executeSQLQuery;
+window.loadSQLToWorkbench = loadSQLToWorkbench;
+window.executeVectorSearch = executeVectorSearch;
+window.handleVectorSubmit = handleVectorSubmit;
+window.toggleTimeline = toggleTimeline;
+window.showToast = showToast;

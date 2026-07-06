@@ -1,0 +1,14 @@
+{
+  "name": "durg-university-rag-frontend",
+  "version": "2.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.1.1"
+  }
+}
